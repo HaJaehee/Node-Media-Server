@@ -2,9 +2,9 @@ const NodeRtmpSecureClient = require('./node_rtmp_secure_client');
 const NodeRtmpClient = require('./node_rtmp_client');
 
 /* viewer.js
- * RUN viewer.js on black.
- * It polls video from Jupiter's media server, and send it to local
- * In baekjun's computer, the python viewer can grap the video from black
+ * Black should run viewer.js.
+ * It polls video from Jupiter's media server, and send it to local media server.
+ * In baekjun's computer, the python viewer can grap the video from black's media server.
  */
 
 let LOCAL_IP = '127.0.0.1';
@@ -33,5 +33,6 @@ async function run_push_client() {
     console.log('push_client start');
 }
 
-run_pulling_client();
+/* Push client should connect to the media server first. */
+setTimeout(run_pulling_client, 1000);
 run_push_client();
