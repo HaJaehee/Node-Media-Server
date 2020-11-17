@@ -2,8 +2,9 @@ const NodeRtmpSecureClient = require('./node_rtmp_secure_client');
 const NodeRtmpClient = require('./node_rtmp_client');
 
 /* broadcaster.js 
- * Baekjun's computer broadcasts with OBS to blue's media server
- * It polls video from local (blue) media server, and send the video to Jupiter's media server
+ * Blue should run broadcaster.js.
+ * Baekjun's computer broadcasts with OBS to blue's media server.
+ * It polls video from local (blue) media server, and send the video to Jupiter's media server.
  */
 
 let LOCAL_IP = '127.0.0.1';
@@ -32,5 +33,6 @@ async function run_push_client() {
     console.log('push_client start');
 }
 
-run_pulling_client();
+/* Push client should connect to the media server first. */
+setTimeout(run_pulling_client, 1000);
 run_push_client();
