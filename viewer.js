@@ -1,22 +1,23 @@
 const NodeRtmpSecureClient = require('./node_rtmp_secure_client');
 const NodeRtmpClient = require('./node_rtmp_client');
 
-/* broadcaster.js 
- * Baekjun's computer broadcasts with OBS to blue's media server
- * It polls video from local (blue) media server, and send the video to Jupiter's media server
+/* viewer.js
+ * RUN viewer.js on black.
+ * It polls video from Jupiter's media server, and send it to local
+ * In baekjun's computer, the python viewer can grap the video from black
  */
 
 let LOCAL_IP = '127.0.0.1';
 let JUPITER_IP = '10.0.10.1';
 
-let PULLING_STREAM_KEY = 'blue'; //from local media server
-let PUSH_STREAM_KEY = 'wins' //to Jupiter
+let PULLING_STREAM_KEY = 'wins'; //pull from jupiter
+let PUSH_STREAM_KEY = 'black'; //push to local
 
-let pulling_rtmp_url = 'rtmp://' + LOCAL_IP + '/live/' + PULLING_STREAM_KEY;
-let push_rtmp_url = 'rtmp://' + JUPITER_IP + '/live/' + PUSH_STREAM_KEY;
+let pulling_rtmp_url = 'rtmp://' + JUPITER_IP + '/live/' + PULLING_STREAM_KEY;
+let push_rtmp_url = 'rtmp://' + LOCAL_IP + '/live/' + PUSH_STREAM_KEY;
 
 let pulling_client = new NodeRtmpClient(pulling_rtmp_url);
-let push_client = new NodeRtmpSecureClient(push_rtmp_url, PUSH_STREAM_KEY);
+let push_client = new NodeRtmpClient(push_rtmp_url);
 
 pulling_client.on('video', (videoData, timestamp) => {
     push_client.pushVideo(videoData, timestamp);
