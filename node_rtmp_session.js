@@ -235,6 +235,34 @@ class NodeRtmpSession {
     this.stop();
   }
 
+  authentication(data, _callback) {
+      let ENCRYPTED_MESSAGE_SIZE = 256;
+      let PUBKEY_SIZE = 204;
+      let Net = require('net');
+      
+      let intended_streamId = Buffer.alloc(PUBKEY_SIZE);
+      let encrypted_message = Buffer.alloc(ENCRYPTED_MESSAGE_SIZE);
+
+      let host = '10.0.10.1'
+      let port = 3099
+      
+      var sim_socket = new Net.Socket();
+      sim_socket.connect(port, host, function() {
+          sim_socket.write(data);
+      });
+
+      sim_socket.on('data', function(response) {
+          //console.log('Received: ' + response);
+          if (response == 'success')
+              _callback(true);
+          else
+              _callback(false);
+          sim_socket.end();
+      });
+      sim_socket.on('close', () => {
+          console.log('server close the socket first...');
+      });
+  }
   onSocketData(data) {
     let bytes = data.length;
     let p = 0;
@@ -257,11 +285,18 @@ class NodeRtmpSession {
           bytes -= n;
           p += n;
           if (this.handshakeBytes === RTMP_HANDSHAKE_SIZE) {
-            this.handshakeState = RTMP_HANDSHAKE_1;
-            this.handshakeBytes = 0;
-            let s0s1s2 = Handshake.generateS0S1S2(this.handshakePayload);
-            this.socket.write(s0s1s2);
-          }
+              this.authentication(this.handshakePayload, (response) => {
+                if (response) {
+                  Logger.log('[onSocketData] Authentication Success');
+                  this.handshakeState = RTMP_HANDSHAKE_1;
+                  this.handshakeBytes = 0;
+                  let s0s1s2 = Handshake.generateS0S1S2(this.handshakePayload);
+                  this.socket.write(s0s1s2);
+                }
+                else {
+                  Logger.log('[onSocketData] Authentication Failed');
+                }});
+            }
           break;
         case RTMP_HANDSHAKE_1:
           // Logger.log('RTMP_HANDSHAKE_1');
