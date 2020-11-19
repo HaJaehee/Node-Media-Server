@@ -36,7 +36,7 @@ const config = {
     secret: 'nodemedia2017privatekey'
   },
   baekjunAuth: {
-      working: true
+      working: false
   }
 };
 

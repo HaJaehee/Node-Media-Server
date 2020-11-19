@@ -236,6 +236,10 @@ class NodeRtmpSession {
   }
 
   authentication(data, _callback) {
+      if (!this.config.baekjunAuth || !this.config.baekjunAuth.working) {
+          Logger.log('NO AUTH need mode');
+          _callback(true);
+      }
       let ENCRYPTED_MESSAGE_SIZE = 256;
       let PUBKEY_SIZE = 204;
       let Net = require('net');
@@ -260,7 +264,7 @@ class NodeRtmpSession {
           sim_socket.end();
       });
       sim_socket.on('close', () => {
-          console.log('server close the socket first...');
+          sim_socket.end();
       });
   }
   onSocketData(data) {
