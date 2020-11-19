@@ -20,7 +20,7 @@ let pulling_rtmp_url = 'rtmp://' + LOCAL_IP + '/live/' + PULLING_STREAM_KEY;
 let push_rtmp_url = 'rtmp://' + JUPITER_IP + '/live/' + PUSH_STREAM_KEY;
 
 let pulling_client = new NodeRtmpClient(pulling_rtmp_url);
-let push_client = new NodeRtmpSecureClient(push_rtmp_url, PUSH_STREAM_KEY, 'jun', 'baek');
+let push_client = new NodeRtmpClient(push_rtmp_url, PUSH_STREAM_KEY);
 
 pulling_client.on('video', (videoData, timestamp) => {
     push_client.pushVideo(videoData, timestamp);
